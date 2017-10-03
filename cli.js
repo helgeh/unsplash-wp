@@ -17,5 +17,5 @@ const cli = meow(`
 unsplashWp({unsplashStore: cli.input[0]}).then(() => {
   console.log(chalk.green('You now have a new wallpaper from Unsplash!'));
 }).catch(err => {
-  console.log(chalk.orange('Sorry, no go...', err));
+  console.log(chalk.yellow('Sorry, no go...', err));
 });
