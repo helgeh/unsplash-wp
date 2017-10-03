@@ -7,15 +7,15 @@ const got = require('got');
 const wp = require('wallpaper');
 
 const defaultOptions = {
-  folderName: path.join(os.homedir(), 'unsplash-wp-store')
+  unsplashStore: path.join(os.tmpdir(), 'unsplash-wp-store')
 };
 
-function go (options) {
+function unsplashWp (options) {
   options = Object.assign({}, defaultOptions, options);
-  return ensureLocalFolder(options.folderName).then(() => {
+  return ensureLocalFolder(options.unsplashStore).then(() => {
     return Promise.all([
       getUnsplash(),
-      getNewFilename(options.folderName)
+      getNewFilename(options.unsplashStore)
     ]).then(values => {
       return download({source: values[0], destination: values[1]})
         .then(setWallpaper)
@@ -23,7 +23,7 @@ function go (options) {
   });
 }
 
-module.exports = go;
+module.exports = unsplashWp;
 
 function ensureLocalFolder (path) {
   return new Promise((resolve, reject) => {
