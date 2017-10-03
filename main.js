@@ -6,27 +6,42 @@ const path = require('path');
 const got = require('got');
 const wp = require('wallpaper');
 
-const wallPaperPath = 'auto-wallpapers';
+const defaultOptions = {
+  folderName: path.join(os.homedir(), 'unsplash-wp-store')
+};
 
-function go () {
-  return Promise
-    .all([
+function go (options) {
+  options = Object.assign({}, defaultOptions, options);
+  return ensureLocalFolder(options.folderName).then(() => {
+    return Promise.all([
       getUnsplash(),
-      getLocalPath()
-    ])
-    .then(values => {
+      getNewFilename(options.folderName)
+    ]).then(values => {
       return download({source: values[0], destination: values[1]})
         .then(setWallpaper)
-    }).catch(console.log)
+    }).catch(console.log); // TODO: Remove this console log. Let the consumer handle errors!
+  });
 }
 
 module.exports = go;
+
+function ensureLocalFolder (path) {
+  return new Promise((resolve, reject) => {
+    fs.mkdir(path, err => {
+      if (err) {
+        if (err.code === 'EEXIST') resolve(null);
+        else reject(err);
+      }
+      else resolve(null);
+    });
+  });
+}
 
 function getUnsplash () {
   let url = makeUrl(); //1920, 1080);
   return got(url, {json: true})
     .then(response => response.body.urls.raw)
-    .catch(err => console.log(err.response.body));
+    .catch(err => console.log(err.response.body)); // TODO: Remove this console log. Let the consumer handle errors!
 }
 
 function makeUrl (w, h) {
@@ -37,20 +52,19 @@ function makeUrl (w, h) {
   return url;
 }
 
-function getLocalPath () {
-  return findNewId()
+function getNewFilename (localPath) {
+  return findNewId(localPath)
     .then(id => {
       let newFileName = `IMG_${id}.jpg`;
-      let dest = path.join(os.homedir(), wallPaperPath, newFileName);
+      let dest = path.join(localPath, newFileName);
       return dest;
     });
 }
 
-function findNewId () {
+function findNewId (localPath) {
   let id = 0;
   return new Promise((resolve, reject) => {
-    let dir = path.join(os.homedir(), wallPaperPath);
-    fs.readdir(dir, (err, response) => {
+    fs.readdir(localPath, (err, response) => {
       if (err) return reject(err);
       let num;
       response.length && response.forEach(item => {

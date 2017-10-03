@@ -29,7 +29,7 @@ module.exports = {
 
         // currently not in use (but might be handy):
         "curly": ["warn", "multi-line"], //, "multi-or-nest"],
-        "object-curly-newline": ["error", {"ObjectExpression": {multiline: true}}],
+        // "object-curly-newline": ["error", {"ObjectExpression": {multiline: true}}],
         "space-before-function-paren": "warn",
 
         // adjust inherited rules:
