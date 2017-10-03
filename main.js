@@ -9,7 +9,7 @@ const wp = require('wallpaper');
 const wallPaperPath = 'auto-wallpapers';
 
 function go () {
-  return new Promise
+  return Promise
     .all([
       getUnsplash(),
       getLocalPath()
