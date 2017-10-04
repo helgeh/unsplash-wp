@@ -14,7 +14,11 @@ const cli = meow(`
     You now have a new wallpaper from Unsplash!
 `);
 
-unsplashWp({unsplashStore: cli.input[0]}).then(() => {
+var options = {};
+if (cli.input[0])
+	options.unsplashStore = cli.input[0];
+
+unsplashWp(options).then(() => {
   console.log(chalk.green('You now have a new wallpaper from Unsplash!'));
 }).catch(err => {
   console.log(chalk.yellow('Sorry, no go...', err));
