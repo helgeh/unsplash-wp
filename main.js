@@ -70,8 +70,8 @@ function findNewId (localPath) {
       response.length && response.forEach(item => {
         num = item.replace(/\D/g, '');
         id = Math.max(id, parseInt(num));
-        if (id || id === 0) id++;
       });
+      if (id || id === 0) id++;
       resolve(id);
     });
   });
